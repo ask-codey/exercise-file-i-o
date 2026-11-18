@@ -15,6 +15,21 @@ namespace GradeBook;
 //   It replaces any file already there.
 // - AddStudent(path, student) adds the student as one line at the end of the file, with the GPA to two
 //   decimal places. If the file isn't there yet, it's created with the header first.
+//
+// Step 5, for an import that must be all or nothing:
+// - ReadAll(path) returns the students in the file, like Read, but stops at the first line it can't read.
+//   - The header line is skipped, and so are blank lines. Each other line becomes a Student through
+//     StudentLine.Parse(line), which throws a FormatException when it can't read the line.
+//   - ReadAll catches that FormatException and throws a new FormatException instead, with:
+//     - the message "{file name} line {line number}: can't read '{line}'", such as
+//       "student_grades.csv line 7: can't read 'David,Jones'" (line numbers count from 1, header included);
+//     - the original exception as its InnerException;
+//     - the line number, an int, in its Data under the name "LineNumber".
+//   - ReadAll logs nothing and doesn't catch a missing file.
+// - ImportHonorRoll(sourcePath, honorRollPath, minimumGpa) reads every student with ReadAll, then writes
+//   the honor roll with WriteHonorRoll and returns true.
+//   - If ReadAll throws a FormatException, ImportHonorRoll catches it, logs
+//     "Honor roll not imported: {the exception's message}", writes no file, and returns false.
 public class GradeFile
 {
     private const string Header = "firstname,lastname,gpa";
@@ -38,5 +53,16 @@ public class GradeFile
 
     public void AddStudent(string path, Student student)
     {
+    }
+
+    public List<Student> ReadAll(string path)
+    {
+        List<Student> students = new List<Student>();
+        return students;
+    }
+
+    public bool ImportHonorRoll(string sourcePath, string honorRollPath, decimal minimumGpa)
+    {
+        return false;
     }
 }
